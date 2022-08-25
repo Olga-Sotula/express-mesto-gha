@@ -13,7 +13,7 @@ const createCard = (req, res) => {
   Card.create({ name, link, owner })
     .then((card) => res.ststus(200).send(card))
     .catch((e) => {
-      if (e.errors.name === 'ValidatorError') {
+      if (e.name === 'ValidationError') {
         return res.status(400).send({ message: 'Ошибка данных в запросе' });
       }
       return res.status(500).send({ message: 'Произошла ошибка' });
