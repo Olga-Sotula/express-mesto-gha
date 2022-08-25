@@ -22,6 +22,10 @@ app.use((req, res, next) => {
 app.use(userRouter);
 app.use(cardRouter);
 
+app.get('*', (req, res) => {
+  res.status(404).send({ message: ' Запрос не обрабатывается' });
+});
+
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });

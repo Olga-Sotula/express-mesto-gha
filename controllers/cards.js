@@ -29,7 +29,12 @@ const deleteCardById = (req, res) => {
       }
       return res.status(200).send(card);
     })
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((e) => {
+      if (e.name === 'ValidationError') {
+        return res.status(400).send({ message: 'Ошибка данных в запросе' });
+      }
+      return res.status(500).send({ message: 'Произошла ошибка' });
+    });
 };
 
 const likeCard = (req, res) => {
@@ -44,7 +49,12 @@ const likeCard = (req, res) => {
       }
       return res.status(200).send(card);
     })
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((e) => {
+      if (e.name === 'ValidationError') {
+        return res.status(400).send({ message: 'Ошибка данных в запросе' });
+      }
+      return res.status(500).send({ message: 'Произошла ошибка' });
+    });
 };
 
 const dislikeCard = (req, res) => {
@@ -59,7 +69,12 @@ const dislikeCard = (req, res) => {
       }
       return res.status(200).send(card);
     })
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((e) => {
+      if (e.name === 'ValidationError') {
+        return res.status(400).send({ message: 'Ошибка данных в запросе' });
+      }
+      return res.status(500).send({ message: 'Произошла ошибка' });
+    });
 };
 
 module.exports = {
