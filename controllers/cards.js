@@ -30,8 +30,8 @@ const deleteCardById = (req, res) => {
       return res.status(200).send(card);
     })
     .catch((e) => {
-      if (e.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Ошибка данных в запросе' });
+      if (e.name === 'CastError') {
+        return res.status(400).send({ message: 'Ошибка данных в запросе: некорректный Id' });
       }
       return res.status(500).send({ message: 'Произошла ошибка' });
     });
@@ -50,8 +50,8 @@ const likeCard = (req, res) => {
       return res.status(200).send(card);
     })
     .catch((e) => {
-      if (e.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Ошибка данных в запросе' });
+      if (e.name === 'CastError') {
+        return res.status(400).send({ message: 'Ошибка данных в запросе: некорректный Id' });
       }
       return res.status(500).send({ message: 'Произошла ошибка' });
     });
@@ -70,8 +70,8 @@ const dislikeCard = (req, res) => {
       return res.status(200).send(card);
     })
     .catch((e) => {
-      if (e.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Ошибка данных в запросе' });
+      if (e.name === 'CastError') {
+        return res.status(400).send({ message: 'Ошибка данных в запросе: некорректный Id' });
       }
       return res.status(500).send({ message: 'Произошла ошибка' });
     });
