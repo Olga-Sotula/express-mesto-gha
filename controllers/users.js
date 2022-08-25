@@ -13,16 +13,21 @@ const getUserById = (req, res) => {
       if (!user) {
         return res.status(404).send({ message: 'Пользователь не найден' });
       }
-      return res.ststus(200).send(user);
+      return res.status(200).send(user);
     })
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((e) => {
+      if (e.name === 'CastError') {
+        return res.status(400).send({ message: 'Ошибка данных в запросе: некорректный Id' });
+      }
+      return res.status(500).send({ message: 'Произошла ошибка' });
+    });
 };
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   USER.create({ name, about, avatar })
-    .then((user) => res.ststus(200).send(user))
+    .then((user) => res.status(200).send(user))
     .catch((e) => {
       if (e.name === 'ValidationError') {
         return res.status(400).send({ message: 'Ошибка данных в запросе' });
@@ -40,9 +45,14 @@ const updateUserProfile = (req, res) => {
       if (!user) {
         return res.status(404).send({ message: 'Пользователь не найден' });
       }
-      return res.ststus(200).send(user);
+      return res.status(200).send(user);
     })
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((e) => {
+      if (e.name === 'ValidationError') {
+        return res.status(400).send({ message: 'Ошибка данных в запросе' });
+      }
+      return res.status(500).send({ message: 'Произошла ошибка' });
+    });
 };
 
 const updateUserAvatar = (req, res) => {
@@ -54,7 +64,7 @@ const updateUserAvatar = (req, res) => {
       if (!user) {
         return res.status(404).send({ message: 'Пользователь не найден' });
       }
-      return res.ststus(200).send(user);
+      return res.status(200).send(user);
     })
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };

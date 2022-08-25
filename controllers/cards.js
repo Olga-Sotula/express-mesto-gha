@@ -11,7 +11,7 @@ const createCard = (req, res) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner })
-    .then((card) => res.ststus(200).send(card))
+    .then((card) => res.status(200).send(card))
     .catch((e) => {
       if (e.name === 'ValidationError') {
         return res.status(400).send({ message: 'Ошибка данных в запросе' });
@@ -27,7 +27,7 @@ const deleteCardById = (req, res) => {
       if (!card) {
         return res.status(404).send({ message: 'Карточка не найдена' });
       }
-      return res.ststus(200).send(card);
+      return res.status(200).send(card);
     })
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
@@ -42,7 +42,7 @@ const likeCard = (req, res) => {
       if (!card) {
         return res.status(404).send({ message: 'Карточка не найдена' });
       }
-      return res.ststus(200).send(card);
+      return res.status(200).send(card);
     })
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
@@ -57,7 +57,7 @@ const dislikeCard = (req, res) => {
       if (!card) {
         return res.status(404).send({ message: 'Карточка не найдена' });
       }
-      return res.ststus(200).send(card);
+      return res.status(200).send(card);
     })
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
