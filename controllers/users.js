@@ -1,10 +1,15 @@
 const User = require('../models/user');
-const errorStatus = require('../errors/constants');
+const {
+  StatusOk,
+  StatusBadRequest,
+  StatusNotFound,
+  StatusServerError,
+} = require('../errors/constants');
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(errorStatus.ok).send(users))
-    .catch(() => res.status(errorStatus.serverError).send({ message: 'Произошла ошибка' }));
+    .then((users) => res.status(StatusOk).send(users))
+    .catch(() => res.status(StatusServerError).send({ message: 'Произошла ошибка' }));
 };
 
 const getUserById = (req, res) => {
@@ -12,16 +17,16 @@ const getUserById = (req, res) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        res.status(errorStatus.notFound).send({ message: 'Пользователь не найден' });
+        res.status(StatusNotFound).send({ message: 'Пользователь не найден' });
       } else {
-        res.status(errorStatus.ok).send(user);
+        res.status(StatusOk).send(user);
       }
     })
     .catch((e) => {
       if (e.name === 'CastError') {
-        res.status(errorStatus.badRequest).send({ message: 'Ошибка данных в запросе: некорректный Id' });
+        res.status(StatusBadRequest).send({ message: 'Ошибка данных в запросе: некорректный Id' });
       } else {
-        res.status(errorStatus.serverError).send({ message: 'Произошла ошибка' });
+        res.status(StatusServerError).send({ message: 'Произошла ошибка' });
       }
     });
 };
@@ -30,12 +35,12 @@ const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then((user) => res.status(errorStatus.ok).send(user))
+    .then((user) => res.status(StatusOk).send(user))
     .catch((e) => {
       if (e.name === 'ValidationError') {
-        res.status(errorStatus.badRequest).send({ message: 'Ошибка данных в запросе' });
+        res.status(StatusBadRequest).send({ message: 'Ошибка данных в запросе' });
       } else {
-        res.status(errorStatus.serverError).send({ message: 'Произошла ошибка' });
+        res.status(StatusServerError).send({ message: 'Произошла ошибка' });
       }
     });
 };
@@ -51,16 +56,16 @@ const updateUserProfile = (req, res) => {
   })
     .then((user) => {
       if (!user) {
-        res.status(errorStatus.notFound).send({ message: 'Пользователь не найден' });
+        res.status(StatusNotFound).send({ message: 'Пользователь не найден' });
       } else {
-        res.status(errorStatus.ok).send(user);
+        res.status(StatusOk).send(user);
       }
     })
     .catch((e) => {
       if (e.name === 'ValidationError') {
-        res.status(errorStatus.badRequest).send({ message: 'Ошибка данных в запросе' });
+        res.status(StatusBadRequest).send({ message: 'Ошибка данных в запросе' });
       } else {
-        res.status(errorStatus.serverError).send({ message: 'Произошла ошибка' });
+        res.status(StatusServerError).send({ message: 'Произошла ошибка' });
       }
     });
 };
@@ -76,12 +81,12 @@ const updateUserAvatar = (req, res) => {
   })
     .then((user) => {
       if (!user) {
-        res.status(errorStatus.notFound).send({ message: 'Пользователь не найден' });
+        res.status(StatusNotFound).send({ message: 'Пользователь не найден' });
       } else {
-        res.status(errorStatus.ok).send(user);
+        res.status(StatusOk).send(user);
       }
     })
-    .catch(() => res.status(errorStatus.serverError).send({ message: 'Произошла ошибка' }));
+    .catch(() => res.status(StatusServerError).send({ message: 'Произошла ошибка' }));
 };
 
 module.exports = {
