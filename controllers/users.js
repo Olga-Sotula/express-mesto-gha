@@ -23,7 +23,12 @@ const createUser = (req, res) => {
 
   USER.create({ name, about, avatar })
     .then((user) => res.ststus(200).send(user))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((e) => {
+      if (e.errors.name === 'ValidatorError') {
+        return res.status(400).send({ message: 'Ошибка данных в запросе' });
+      }
+      return res.status(500).send({ message: 'Произошла ошибка' });
+    });
 };
 
 const updateUserProfile = (req, res) => {
