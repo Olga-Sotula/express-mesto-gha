@@ -11,15 +11,17 @@ const getUserById = (req, res) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'Пользователь не найден' });
+        res.status(404).send({ message: 'Пользователь не найден' });
+      } else {
+        res.status(200).send(user);
       }
-      return res.status(200).send(user);
     })
     .catch((e) => {
       if (e.name === 'CastError') {
-        return res.status(400).send({ message: 'Ошибка данных в запросе: некорректный Id' });
+        res.status(400).send({ message: 'Ошибка данных в запросе: некорректный Id' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -30,9 +32,10 @@ const createUser = (req, res) => {
     .then((user) => res.status(200).send(user))
     .catch((e) => {
       if (e.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Ошибка данных в запросе' });
+        res.status(400).send({ message: 'Ошибка данных в запросе' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -47,15 +50,17 @@ const updateUserProfile = (req, res) => {
   })
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'Пользователь не найден' });
+        res.status(404).send({ message: 'Пользователь не найден' });
+      } else {
+        res.status(200).send(user);
       }
-      return res.status(200).send(user);
     })
     .catch((e) => {
       if (e.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Ошибка данных в запросе' });
+        res.status(400).send({ message: 'Ошибка данных в запросе' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -70,9 +75,10 @@ const updateUserAvatar = (req, res) => {
   })
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'Пользователь не найден' });
+        res.status(404).send({ message: 'Пользователь не найден' });
+      } else {
+        res.status(200).send(user);
       }
-      return res.status(200).send(user);
     })
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };

@@ -14,9 +14,10 @@ const createCard = (req, res) => {
     .then((card) => res.status(200).send(card))
     .catch((e) => {
       if (e.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Ошибка данных в запросе' });
+        res.status(400).send({ message: 'Ошибка данных в запросе' });
+      } else {
+        return res.status(500).send({ message: 'Произошла ошибка' });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -25,15 +26,17 @@ const deleteCardById = (req, res) => {
   Card.findByIdAndRemove(cardId)
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: 'Карточка не найдена' });
+        res.status(404).send({ message: 'Карточка не найдена' });
+      } else {
+        res.status(200).send(card);
       }
-      return res.status(200).send(card);
     })
     .catch((e) => {
       if (e.name === 'CastError') {
-        return res.status(400).send({ message: 'Ошибка данных в запросе: некорректный Id' });
+        res.status(400).send({ message: 'Ошибка данных в запросе: некорректный Id' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -45,15 +48,17 @@ const likeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: 'Карточка не найдена' });
+        res.status(404).send({ message: 'Карточка не найдена' });
+      } else {
+        res.status(200).send(card);
       }
-      return res.status(200).send(card);
     })
     .catch((e) => {
       if (e.name === 'CastError') {
-        return res.status(400).send({ message: 'Ошибка данных в запросе: некорректный Id' });
+        res.status(400).send({ message: 'Ошибка данных в запросе: некорректный Id' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -65,15 +70,17 @@ const dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: 'Карточка не найдена' });
+        res.status(404).send({ message: 'Карточка не найдена' });
+      } else {
+        res.status(200).send(card);
       }
-      return res.status(200).send(card);
     })
     .catch((e) => {
       if (e.name === 'CastError') {
-        return res.status(400).send({ message: 'Ошибка данных в запросе: некорректный Id' });
+        res.status(400).send({ message: 'Ошибка данных в запросе: некорректный Id' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
 
