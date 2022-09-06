@@ -22,7 +22,8 @@
   "homepage": "https://github.com/Olga-Sotula/express-mesto-gha#readme",
   "dependencies": {
     "express": "^4.18.1",
-    "mongoose": "^6.5.3"
+    "mongoose": "^6.5.3",
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "eslint": "^8.22.0",
