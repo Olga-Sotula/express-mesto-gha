@@ -33,18 +33,22 @@ const getUserById = (req, res) => {
     });
 };
 
-const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-
-  User.create({ name, about, avatar })
-    .then((user) => res.status(StatusOk).send(user))
-    .catch((e) => {
+const createUser = (req, res, next) => {
+  const { name, about, avatar, email, password } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hashedPassword) => {
+      User.create({ name, about, avatar, email, password: hashedPassword })
+        .then((user) => res.status(StatusOk).send({ data: user }))
+        .catch(next);
+    })
+    .catch(next);
+    /*.catch((e) => {
       if (e.name === 'ValidationError') {
         res.status(StatusBadRequest).send({ message: 'Ошибка данных в запросе' });
       } else {
         res.status(StatusServerError).send({ message: 'Произошла ошибка' });
       }
-    });
+    });*/
 };
 
 const updateUserProfile = (req, res) => {
