@@ -51,6 +51,27 @@ const createUser = (req, res, next) => {
     });*/
 };
 
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+  User.findOne({ email })
+    .select('+password')
+    .orFail(() => new Error ('Неправильный логин или пароль'))
+    .then((user) => {
+      console.log(password);
+      console.log(user.password);
+      bcrypt.compare(password, user.password)
+        .then((isUserValid) => {
+          if (isUserValid) {
+            res.status(StatusOk).send({ data: user });
+          } else {
+            res.status(StatusNotFound).send({ message: 'Неправильный логин или пароль' });
+          }
+        })
+        .catch(next);
+    })
+    .catch(next);
+};
+
 const updateUserProfile = (req, res) => {
   const userId = req.user._id;
   const { name, about } = req.body;
@@ -96,9 +117,10 @@ const updateUserAvatar = (req, res) => {
 };
 
 module.exports = {
+  createUser,
+  login,
   getUsers,
   getUserById,
-  createUser,
   updateUserProfile,
   updateUserAvatar,
 };
