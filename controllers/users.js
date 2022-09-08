@@ -46,7 +46,7 @@ const createUser = (req, res, next) => {
         about,
         avatar,
         email,
-        password: hashedPassword
+        password: hashedPassword,
       })
         .then((user) => res.status(STATUS_OK).send({ data: user }))
         .catch((e) => {
@@ -71,7 +71,7 @@ const login = (req, res, next) => {
       bcrypt.compare(password, user.password)
         .then((isUserValid) => {
           if (isUserValid) {
-            const token = jwt.sign({ _id: user._id }, process.env['JWT_SECRET']);
+            const token = jwt.sign({ _id: user._id }, process.env['JWT.SECRET']);
             res.cookie('jwt', token, {
               maxAge: 604800000,
               httpOnly: true,
