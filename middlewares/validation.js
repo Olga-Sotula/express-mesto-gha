@@ -45,6 +45,12 @@ const createCardValidator = celebrate({
   }),
 });
 
+const idValidator = celebrate({
+  params: Joi.object().keys({
+    id: Joi.string().hex().length(24),
+  }),
+});
+
 module.exports = {
   createUserValidator,
   loginValidator,
@@ -52,4 +58,5 @@ module.exports = {
   updateUserProfileValidator,
   updateUserAvatarValidator,
   createCardValidator,
+  idValidator,
 };
