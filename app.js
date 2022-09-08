@@ -2,9 +2,10 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 
-const auth = require('./middlewares/auth');
+const { auth } = require('./middlewares/auth');
 const { userRouter } = require('./routes/users');
 const { cardRouter } = require('./routes/cards');
 const { authRouter } = require('./routes/auth');
@@ -19,7 +20,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
 });
 
-app.use(express.json());
+app.use(bodyParser.json());
 
 app.use(authRouter);
 app.use(auth);

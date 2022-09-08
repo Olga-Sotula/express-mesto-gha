@@ -13,8 +13,7 @@ const getUsers = (req, res, next) => {
 };
 
 const getCurrentUser = (req, res, next) => {
-  const { userId } = req.user._id;
-  User.findById(userId)
+  User.findById(req.user._id)
     .orFail(() => new ErrorNotFound('Пользователь не найден'))
     .then((user) => {
       res.status(STATUS_OK).send({ data: user });
@@ -29,8 +28,7 @@ const getCurrentUser = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  const { userId } = req.params.id;
-  User.findById(userId)
+  User.findById(req.params.id)
     .orFail(() => new ErrorNotFound('Пользователь не найден'))
     .then((user) => {
       res.status(STATUS_OK).send({ data: user });
