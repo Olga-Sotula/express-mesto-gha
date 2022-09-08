@@ -3,6 +3,7 @@ const { STATUS_OK } = require('../errors/constants');
 const { ErrorBadRequest } = require('../errors/ErrorBadRequest');
 const { ErrorNotFound } = require('../errors/ErrorNotFound');
 const { ErrorForbidden } = require('../errors/ErrorForbidden');
+const { ErrorServer } = require('../errors/ErrorServer');
 
 const getCards = (req, res, next) => {
   Card.find({})
@@ -25,18 +26,18 @@ const createCard = (req, res, next) => {
     });
 };
 
-const deleteCardById = (req, res) => {
+const deleteCardById = (req, res, next) => {
   const { cardId } = req.params;
   Card.findById(cardId)
     .orFail(() => new ErrorNotFound('Карточка не найдена'))
     .then((card) => {
       if (card.owner !== req.user._id) {
-        next( new ErrorForbidden('Отсутствуют права на удаление карточки');
+        next(new ErrorForbidden('Отсутствуют права на удаление карточки'));
       } else {
         Card.findByIdAndRemove(cardId)
-        .then((card) => {
-          res.status(STATUS_OK).send({ data: card });
-        });
+          .then((deletedCard) => {
+            res.status(STATUS_OK).send({ data: deletedCard });
+          });
       }
     })
     .catch((e) => {
