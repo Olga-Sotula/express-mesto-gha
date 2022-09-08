@@ -1,79 +1,84 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const {
-  StatusOk,
-  StatusBadRequest,
-  StatusNotFound,
-  StatusServerError,
-} = require('../errors/constants');
+const { STATUS_OK } = require('../errors/constants');
+const { ErrorNotFound } = require('../errors/ErrorNotFound');
+const { ErrorBadRequest } = require('../errors/ErrorBadRequest');
+const { ErrorEmailDublicate } = require('../errors/ErrorEmailDublicate');
+const { ErrorBadAuth } = require('../errors/ErrorBadAuth');
 
-const getUsers = (req, res) => {
+const getUsers = (req, res, next) => {
   console.log(req.user);
   User.find({})
-    .then((users) => res.status(StatusOk).send(users))
-    .catch(() => res.status(StatusServerError).send({ message: 'Произошла ошибка' }));
+    .then((users) => res.status(STATUS_OK).send({ data: users }))
+    .catch(next);
 };
 
-const getUserById = (req, res) => {
+const getUserById = (req, res, next) => {
   const { userId } = req.params;
   User.findById(userId)
+    .orFail(() => new ErrorNotFound('Пользователь не найден'))
     .then((user) => {
-      if (!user) {
-        res.status(StatusNotFound).send({ message: 'Пользователь не найден' });
-      } else {
-        res.status(StatusOk).send(user);
-      }
+      res.status(STATUS_OK).send({ data: user });
     })
     .catch((e) => {
       if (e.name === 'CastError') {
-        res.status(StatusBadRequest).send({ message: 'Ошибка данных в запросе: некорректный Id' });
+        next(new ErrorBadRequest('Ошибка данных в запросе: некорректный Id'));
       } else {
-        res.status(StatusServerError).send({ message: 'Произошла ошибка' });
+        next(e);
       }
     });
 };
 
 const createUser = (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name,
+    about,
+    avatar,
+    email,
+    password,
+  } = req.body;
   bcrypt.hash(password, 10)
     .then((hashedPassword) => {
-      User.create({ name, about, avatar, email, password: hashedPassword })
-        .then((user) => res.status(StatusOk).send({ data: user }))
-        .catch(next);
+      User.create({
+        name,
+        about,
+        avatar,
+        email,
+        password: hashedPassword
+      })
+        .then((user) => res.status(STATUS_OK).send({ data: user }))
+        .catch((e) => {
+          if (e.code === 11000) {
+            next(new ErrorEmailDublicate('Ошибка данных в запросе: пользователь с таким email существует'));
+          } else if (e.name === 'ValidationError') {
+            next(new ErrorBadRequest('Ошибка данных в запросе'));
+          } else {
+            next(e);
+          }
+        });
     })
     .catch(next);
-    /*.catch((e) => {
-      if (e.name === 'ValidationError') {
-        res.status(StatusBadRequest).send({ message: 'Ошибка данных в запросе' });
-      } else {
-        res.status(StatusServerError).send({ message: 'Произошла ошибка' });
-      }
-    });*/
 };
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
   User.findOne({ email })
     .select('+password')
-    .orFail(() => new Error ('Неправильный логин или пароль'))
+    .orFail(() => new ErrorBadAuth('Неправильный логин или пароль'))
     .then((user) => {
-      console.log(password);
-      console.log(user.password);
       bcrypt.compare(password, user.password)
         .then((isUserValid) => {
           if (isUserValid) {
-            console.log('userValide...');
-            //console.log(process.env['JWT_SECRET']);
             const token = jwt.sign({ _id: user._id }, process.env['JWT_SECRET']);
             res.cookie('jwt', token, {
               maxAge: 604800000,
               httpOnly: true,
               sameSite: true,
             });
-            res.status(StatusOk).send({ data: user });
+            res.status(STATUS_OK).send({ data: user });
           } else {
-            res.status(StatusNotFound).send({ message: 'Неправильный логин или пароль' });
+            next(new ErrorBadAuth('Неправильный логин или пароль'));
           }
         })
         .catch(next);
@@ -81,32 +86,31 @@ const login = (req, res, next) => {
     .catch(next);
 };
 
-const updateUserProfile = (req, res) => {
+const updateUserProfile = (req, res, next) => {
   const userId = req.user._id;
   const { name, about } = req.body;
-
+  console.log(userId);
+  console.log(req.body);
   User.findByIdAndUpdate(userId, { name, about }, {
     new: true,
     runValidators: true,
     upsert: true,
   })
+    .orFail(() => new ErrorNotFound('Пользователь не найден'))
     .then((user) => {
-      if (!user) {
-        res.status(StatusNotFound).send({ message: 'Пользователь не найден' });
-      } else {
-        res.status(StatusOk).send(user);
-      }
+      console.log(user);
+      res.status(STATUS_OK).send({ data: user });
     })
     .catch((e) => {
       if (e.name === 'ValidationError') {
-        res.status(StatusBadRequest).send({ message: 'Ошибка данных в запросе' });
+        next(new ErrorBadRequest('Ошибка данных в запросе'));
       } else {
-        res.status(StatusServerError).send({ message: 'Произошла ошибка' });
+        next(e);
       }
     });
 };
 
-const updateUserAvatar = (req, res) => {
+const updateUserAvatar = (req, res, next) => {
   const userId = req.user._id;
   const { avatar } = req.body;
 
@@ -115,14 +119,17 @@ const updateUserAvatar = (req, res) => {
     runValidators: true,
     upsert: true,
   })
+    .orFail(() => new ErrorNotFound('Пользователь не найден'))
     .then((user) => {
-      if (!user) {
-        res.status(StatusNotFound).send({ message: 'Пользователь не найден' });
-      } else {
-        res.status(StatusOk).send(user);
-      }
+      res.status(STATUS_OK).send({ data: user });
     })
-    .catch(() => res.status(StatusServerError).send({ message: 'Произошла ошибка' }));
+    .catch((e) => {
+      if (e.name === 'ValidationError') {
+        next(new ErrorBadRequest('Ошибка данных в запросе'));
+      } else {
+        next(e);
+      }
+    });
 };
 
 module.exports = {

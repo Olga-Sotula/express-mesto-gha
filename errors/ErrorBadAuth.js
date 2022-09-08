@@ -7,4 +7,4 @@ class ErrorBadAuth extends Error {
   }
 }
 
-module.exports = ErrorBadAuth;
+module.exports = { ErrorBadAuth };

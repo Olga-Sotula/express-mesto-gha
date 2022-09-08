@@ -7,4 +7,4 @@ class ErrorEmailDublicate extends Error {
   }
 }
 
-module.exports = ErrorEmailDublicate;
+module.exports = { ErrorEmailDublicate };
