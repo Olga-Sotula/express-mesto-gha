@@ -1,3 +1,5 @@
+const { JWT_SECRET } = process.env;
+
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
@@ -5,7 +7,6 @@ const { STATUS_OK } = require('../errors/constants');
 const { ErrorNotFound } = require('../errors/ErrorNotFound');
 const { ErrorBadRequest } = require('../errors/ErrorBadRequest');
 const { ErrorEmailDublicate } = require('../errors/ErrorEmailDublicate');
-const { ErrorBadAuth } = require('../errors/ErrorBadAuth');
 
 const getUsers = (req, res, next) => {
   console.log(req.user);
@@ -71,25 +72,15 @@ const createUser = (req, res, next) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  User.findOne({ email })
-    .select('+password')
-    .orFail(() => new ErrorBadAuth('Неправильный логин или пароль'))
+  User.findUserByCredential(email, password)
     .then((user) => {
-      bcrypt.compare(password, user.password)
-        .then((isUserValid) => {
-          if (isUserValid) {
-            const token = jwt.sign({ _id: user._id }, process.env['JWT.SECRET']);
-            res.cookie('jwt', token, {
-              maxAge: 604800000,
-              httpOnly: true,
-              sameSite: true,
-            });
-            res.status(STATUS_OK).send({ data: user });
-          } else {
-            next(new ErrorBadAuth('Неправильный логин или пароль'));
-          }
-        })
-        .catch(next);
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET);
+      res.cookie('jwt', token, {
+        maxAge: 604800000,
+        httpOnly: true,
+        sameSite: true,
+      });
+      res.status(STATUS_OK).send({ token });
     })
     .catch(next);
 };

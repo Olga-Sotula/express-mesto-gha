@@ -1,3 +1,4 @@
+const { JWT_SECRET } = process.env;
 const jwt = require('jsonwebtoken');
 const { ErrorBadAuth } = require('../errors/ErrorBadAuth');
 
@@ -6,7 +7,7 @@ const auth = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, process.env['JWT.SECRET']);
+    payload = jwt.verify(token, JWT_SECRET);
   } catch (e) {
     next(new ErrorBadAuth('Ошибка аутентификации'));
   }
