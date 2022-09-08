@@ -7,7 +7,7 @@ const { ErrorForbidden } = require('../errors/ErrorForbidden');
 const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.status(STATUS_OK).send({ data: cards }))
-    .catch(next);
+    .catch(() => next(new ErrorServer('Произошла ошибка')));
 };
 
 const createCard = (req, res, next) => {
@@ -20,7 +20,7 @@ const createCard = (req, res, next) => {
       if (e.name === 'ValidationError') {
         next(ErrorBadRequest('Ошибка данных в запросе'));
       } else {
-        next(e);
+        next(new ErrorServer('Произошла ошибка'));
       }
     });
 };
@@ -43,7 +43,7 @@ const deleteCardById = (req, res) => {
       if (e.name === 'CastError') {
         next(new ErrorBadRequest('Ошибка данных в запросе: некорректный Id'));
       } else {
-        next(e);
+        next(new ErrorServer('Произошла ошибка'));
       }
     });
 };
@@ -62,7 +62,7 @@ const likeCard = (req, res, next) => {
       if (e.name === 'CastError') {
         next(ErrorBadRequest('Ошибка данных в запросе: некорректный Id'));
       } else {
-        next(e);
+        next(new ErrorServer('Произошла ошибка'));
       }
     });
 };
@@ -81,7 +81,7 @@ const dislikeCard = (req, res) => {
       if (e.name === 'CastError') {
         next(new ErrorBadRequest('Ошибка данных в запросе: некорректный Id'));
       } else {
-        next(e);
+        next(new ErrorServer('Произошла ошибка'));
       }
     });
 };
