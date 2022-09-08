@@ -9,6 +9,7 @@ const {
 } = require('../errors/constants');
 
 const getUsers = (req, res) => {
+  console.log(req.user);
   User.find({})
     .then((users) => res.status(StatusOk).send(users))
     .catch(() => res.status(StatusServerError).send({ message: 'Произошла ошибка' }));
