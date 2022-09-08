@@ -47,7 +47,15 @@ const createUser = (req, res, next) => {
         email,
         password: hashedPassword,
       })
-        .then((user) => res.status(STATUS_OK).send({ data: user }))
+        .then((user) => {
+          const createdUser = {
+            name: user.name,
+            about: user.about,
+            avatar: user.avatar,
+            email: user.email,
+          };
+          res.status(STATUS_OK).send({ data: createdUser });
+        })
         .catch((e) => {
           if (e.code === 11000) {
             next(new ErrorEmailDublicate('Ошибка данных в запросе: пользователь с таким email существует'));
