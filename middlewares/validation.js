@@ -6,7 +6,7 @@ const createUserValidator = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     about: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().regex(regex).message('Невалидный аватар'),
+    avatar: Joi.string().required().regex(regex).message('Невалидный аватар'),
   }),
 });
 
