@@ -25,8 +25,31 @@ const getUserValidator = celebrate({
   }),
 });
 
+const updateUserProfileValidator = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+  }),
+});
+
+const updateUserAvatarValidator = celebrate({
+  body: Joi.object().keys({
+    avatar: Joi.string().regex(regex),
+  }),
+});
+
+const createCardValidator = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    link: Joi.string().required().regex(regex),
+  }),
+});
+
 module.exports = {
   createUserValidator,
   loginValidator,
   getUserValidator,
+  updateUserProfileValidator,
+  updateUserAvatarValidator,
+  createCardValidator,
 };
