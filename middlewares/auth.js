@@ -2,8 +2,9 @@ const jwt = require('jsonwebtoken');
 const { ErrorBadAuth } = require('../errors/ErrorBadAuth');
 
 const auth = (req, res, next) => {
-  const { authorization } = req.headers;
-
+  const { authorization } = req.user._id;
+  console.log('áuth');
+  console.log(authorization);
   if (!authorization || !authorization.startsWith('Bearer ')) {
     throw new ErrorBadAuth('Ошибка аутентификации');
   }

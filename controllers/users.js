@@ -7,14 +7,29 @@ const { ErrorBadRequest } = require('../errors/ErrorBadRequest');
 const { ErrorEmailDublicate } = require('../errors/ErrorEmailDublicate');
 
 const getUsers = (req, res, next) => {
-  console.log(req.user);
   User.find({})
     .then((users) => res.status(STATUS_OK).send({ data: users }))
     .catch(next);
 };
 
-const getUserById = (req, res, next) => {
+const getCurrentUser = (req, res, next) => {
   const { userId } = req.user._id;
+  User.findById(userId)
+    .orFail(() => new ErrorNotFound('Пользователь не найден'))
+    .then((user) => {
+      res.status(STATUS_OK).send({ data: user });
+    })
+    .catch((e) => {
+      if (e.name === 'CastError') {
+        next(new ErrorBadRequest('Ошибка данных в запросе: некорректный Id'));
+      } else {
+        next(e);
+      }
+    });
+};
+
+const getUserById = (req, res, next) => {
+  const { userId } = req.params.id;
   User.findById(userId)
     .orFail(() => new ErrorNotFound('Пользователь не найден'))
     .then((user) => {
@@ -132,6 +147,7 @@ module.exports = {
   createUser,
   login,
   getUsers,
+  getCurrentUser,
   getUserById,
   updateUserProfile,
   updateUserAvatar,

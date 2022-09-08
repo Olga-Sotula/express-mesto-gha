@@ -4,13 +4,14 @@ const { getUserValidator } = require('../middlewares/validation');
 const userRouter = express.Router();
 const {
   getUsers,
+  getCurrentUser,
   getUserById,
   updateUserProfile,
   updateUserAvatar,
 } = require('../controllers/users');
 
 userRouter.get('/users', getUsers);
-userRouter.get('/users/me', getUserById);
+userRouter.get('/users/me', getCurrentUser);
 userRouter.get('/users/:userId', getUserValidator, getUserById);
 userRouter.patch('/users/me', updateUserProfile);
 userRouter.patch('/users/me/avatar', updateUserAvatar);
