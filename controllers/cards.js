@@ -54,6 +54,7 @@ const likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .populate(['owner', 'likes'])
     .orFail(() => new ErrorNotFound('Карточка не найдена'))
     .then((card) => {
       res.status(STATUS_OK).send(card);
@@ -73,6 +74,7 @@ const dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .populate(['owner', 'likes'])
     .orFail(() => new ErrorNotFound('Карточка не найдена'))
     .then((card) => {
       res.status(STATUS_OK).send({ data: card });
