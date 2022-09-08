@@ -12,7 +12,7 @@ const {
 
 userRouter.get('/users', getUsers);
 userRouter.get('/users/me', getCurrentUser);
-userRouter.get('/users/:userId', getUserValidator, getUserById);
+userRouter.get('/users/:id', getUserValidator, getUserById);
 userRouter.patch('/users/me', updateUserProfile);
 userRouter.patch('/users/me/avatar', updateUserAvatar);
 
