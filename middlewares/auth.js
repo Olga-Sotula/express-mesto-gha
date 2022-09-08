@@ -1,13 +1,18 @@
-const { JWT_SECRET } = process.env;
 const jwt = require('jsonwebtoken');
 const { ErrorBadAuth } = require('../errors/ErrorBadAuth');
 
 const auth = (req, res, next) => {
-  const token = req.cookies.jwt;
+  const { authorization } = req.headers;
+
+  if (!authorization || !authorization.startsWith('Bearer ')) {
+    throw new ErrorBadAuth('Ошибка аутентификации');
+  }
+
+  const token = authorization.replace('Bearer ', '');
   let payload;
 
   try {
-    payload = jwt.verify(token, JWT_SECRET);
+    payload = jwt.verify(token, 'SECRET');
   } catch (e) {
     next(new ErrorBadAuth('Ошибка аутентификации'));
   }

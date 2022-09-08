@@ -2,7 +2,6 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
-const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 
 const auth = require('./middlewares/auth');
@@ -21,7 +20,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 app.use(express.json());
-app.use(cookieParser());
 
 app.use(authRouter);
 app.use(auth);
