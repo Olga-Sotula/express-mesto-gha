@@ -50,9 +50,9 @@ const deleteCardById = (req, res, next) => {
 
 const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    req.params.id,
     { $addToSet: { likes: req.user._id } },
-    { new: true },
+    { new: true, runValidators: true },
   )
     .populate(['owner', 'likes'])
     .orFail(() => new ErrorNotFound('Карточка не найдена'))
@@ -70,9 +70,9 @@ const likeCard = (req, res, next) => {
 
 const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    req.params.id,
     { $pull: { likes: req.user._id } },
-    { new: true },
+    { new: true, runValidators: true },
   )
     .populate(['owner', 'likes'])
     .orFail(() => new ErrorNotFound('Карточка не найдена'))
