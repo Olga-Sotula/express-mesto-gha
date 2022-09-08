@@ -26,19 +26,16 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCardById = (req, res, next) => {
-  const { cardId } = req.params;
-  Card.findById(cardId)
+  Card.findById(req.params.id)
     .orFail(() => new ErrorNotFound('Карточка не найдена'))
     .then((card) => {
       if (card.owner !== req.user._id) {
-        next(new ErrorForbidden('Отсутствуют права на удаление карточки'));
+        throw new ErrorForbidden('Отсутствуют права на удаление карточки');
       } else {
-        Card.findByIdAndRemove(cardId)
-          .then((deletedCard) => {
-            res.status(STATUS_OK).send({ data: deletedCard });
-          });
+        return Card.findByIdAndDelete(req.params.id);
       }
     })
+    .then((deletedCard) => res.status(STATUS_OK).send({ data: deletedCard }))
     .catch((e) => {
       if (e.name === 'CastError') {
         next(new ErrorBadRequest('Ошибка данных в запросе: некорректный Id'));
@@ -57,7 +54,7 @@ const likeCard = (req, res, next) => {
     .populate(['owner', 'likes'])
     .orFail(() => new ErrorNotFound('Карточка не найдена'))
     .then((card) => {
-      res.status(STATUS_OK).send(card);
+      res.status(STATUS_OK).send({ data: card });
     })
     .catch((e) => {
       if (e.name === 'CastError') {
