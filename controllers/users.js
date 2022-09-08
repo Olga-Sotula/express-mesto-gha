@@ -6,13 +6,12 @@ const { ErrorNotFound } = require('../errors/ErrorNotFound');
 const { ErrorBadRequest } = require('../errors/ErrorBadRequest');
 const { ErrorEmailDublicate } = require('../errors/ErrorEmailDublicate');
 const { ErrorBadAuth } = require('../errors/ErrorBadAuth');
-const { ErrorServer } = require('../errors/ErrorServer');
 
 const getUsers = (req, res, next) => {
   console.log(req.user);
   User.find({})
     .then((users) => res.status(STATUS_OK).send({ data: users }))
-    .catch(() => next(new ErrorServer('Произошла ошибка')));
+    .catch(next);
 };
 
 const getUserById = (req, res, next) => {
@@ -26,7 +25,7 @@ const getUserById = (req, res, next) => {
       if (e.name === 'CastError') {
         next(new ErrorBadRequest('Ошибка данных в запросе: некорректный Id'));
       } else {
-        next(new ErrorServer('Произошла ошибка'));
+        next(e);
       }
     });
 };
@@ -55,11 +54,11 @@ const createUser = (req, res, next) => {
           } else if (e.name === 'ValidationError') {
             next(new ErrorBadRequest('Ошибка данных в запросе'));
           } else {
-            next(new ErrorServer('Произошла ошибка'));
+            next(e);
           }
         });
     })
-    .catch(() => next(new ErrorServer('Произошла ошибка')));
+    .catch(next);
 };
 
 const login = (req, res, next) => {
@@ -82,9 +81,9 @@ const login = (req, res, next) => {
             next(new ErrorBadAuth('Неправильный логин или пароль'));
           }
         })
-        .catch(() => next(new ErrorServer('Произошла ошибка')));
+        .catch(next);
     })
-    .catch(() => next(new ErrorServer('Произошла ошибка')));
+    .catch(next);
 };
 
 const updateUserProfile = (req, res, next) => {
@@ -106,7 +105,7 @@ const updateUserProfile = (req, res, next) => {
       if (e.name === 'ValidationError') {
         next(new ErrorBadRequest('Ошибка данных в запросе'));
       } else {
-        next(new ErrorServer('Произошла ошибка'));
+        next(e);
       }
     });
 };
@@ -128,7 +127,7 @@ const updateUserAvatar = (req, res, next) => {
       if (e.name === 'ValidationError') {
         next(new ErrorBadRequest('Ошибка данных в запросе'));
       } else {
-        next(new ErrorServer('Произошла ошибка'));
+        next(e);
       }
     });
 };

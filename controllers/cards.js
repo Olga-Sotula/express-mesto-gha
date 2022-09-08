@@ -3,12 +3,11 @@ const { STATUS_OK } = require('../errors/constants');
 const { ErrorBadRequest } = require('../errors/ErrorBadRequest');
 const { ErrorNotFound } = require('../errors/ErrorNotFound');
 const { ErrorForbidden } = require('../errors/ErrorForbidden');
-const { ErrorServer } = require('../errors/ErrorServer');
 
 const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.status(STATUS_OK).send({ data: cards }))
-    .catch(() => next(new ErrorServer('Произошла ошибка')));
+    .catch(next);
 };
 
 const createCard = (req, res, next) => {
@@ -21,7 +20,7 @@ const createCard = (req, res, next) => {
       if (e.name === 'ValidationError') {
         next(ErrorBadRequest('Ошибка данных в запросе'));
       } else {
-        next(new ErrorServer('Произошла ошибка'));
+        next(e);
       }
     });
 };
@@ -44,7 +43,7 @@ const deleteCardById = (req, res, next) => {
       if (e.name === 'CastError') {
         next(new ErrorBadRequest('Ошибка данных в запросе: некорректный Id'));
       } else {
-        next(new ErrorServer('Произошла ошибка'));
+        next(e);
       }
     });
 };
@@ -63,7 +62,7 @@ const likeCard = (req, res, next) => {
       if (e.name === 'CastError') {
         next(ErrorBadRequest('Ошибка данных в запросе: некорректный Id'));
       } else {
-        next(new ErrorServer('Произошла ошибка'));
+        next(e);
       }
     });
 };
@@ -82,7 +81,7 @@ const dislikeCard = (req, res, next) => {
       if (e.name === 'CastError') {
         next(new ErrorBadRequest('Ошибка данных в запросе: некорректный Id'));
       } else {
-        next(new ErrorServer('Произошла ошибка'));
+        next(e);
       }
     });
 };
