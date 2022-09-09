@@ -29,7 +29,7 @@ app.use(cardRouter);
 
 app.all('*', (req, res, next) => {
   console.log('appall');
-  next(new ErrorNotFound('Запрос не обрабатывается'));
+  next(new ErrorNotFound('Указанный маршрут не существует'));
 });
 
 app.use(errors());
