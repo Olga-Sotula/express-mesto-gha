@@ -1,14 +1,13 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { STATUS_OK } = require('../errors/constants');
 const { ErrorNotFound } = require('../errors/ErrorNotFound');
 const { ErrorBadRequest } = require('../errors/ErrorBadRequest');
 const { ErrorEmailDublicate } = require('../errors/ErrorEmailDublicate');
 
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.status(STATUS_OK).send({ data: users }))
+    .then((users) => res.send({ data: users }))
     .catch(next);
 };
 
@@ -16,7 +15,7 @@ const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(() => new ErrorNotFound('Пользователь не найден'))
     .then((user) => {
-      res.status(STATUS_OK).send({ data: user });
+      res.send({ data: user });
     })
     .catch((e) => {
       if (e.name === 'CastError') {
@@ -31,7 +30,7 @@ const getUserById = (req, res, next) => {
   User.findById(req.params.id)
     .orFail(() => new ErrorNotFound('Пользователь не найден'))
     .then((user) => {
-      res.status(STATUS_OK).send({ data: user });
+      res.send({ data: user });
     })
     .catch((e) => {
       if (e.name === 'CastError') {
@@ -66,7 +65,7 @@ const createUser = (req, res, next) => {
             avatar: user.avatar,
             email: user.email,
           };
-          res.status(STATUS_OK).send({ data: createdUser });
+          res.send({ data: createdUser });
         })
         .catch((e) => {
           if (e.code === 11000) {
@@ -108,7 +107,7 @@ const updateUserProfile = (req, res, next) => {
     .orFail(() => new ErrorNotFound('Пользователь не найден'))
     .then((user) => {
       console.log(user);
-      res.status(STATUS_OK).send({ data: user });
+      res.send({ data: user });
     })
     .catch((e) => {
       if (e.name === 'ValidationError') {
@@ -130,7 +129,7 @@ const updateUserAvatar = (req, res, next) => {
   })
     .orFail(() => new ErrorNotFound('Пользователь не найден'))
     .then((user) => {
-      res.status(STATUS_OK).send({ data: user });
+      res.send({ data: user });
     })
     .catch((e) => {
       if (e.name === 'ValidationError') {

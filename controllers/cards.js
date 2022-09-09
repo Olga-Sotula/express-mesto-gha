@@ -1,12 +1,11 @@
 const Card = require('../models/card');
-const { STATUS_OK } = require('../errors/constants');
 const { ErrorBadRequest } = require('../errors/ErrorBadRequest');
 const { ErrorNotFound } = require('../errors/ErrorNotFound');
 const { ErrorForbidden } = require('../errors/ErrorForbidden');
 
 const getCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => res.status(STATUS_OK).send({ data: cards }))
+    .then((cards) => res.send({ data: cards }))
     .catch(next);
 };
 
@@ -15,7 +14,7 @@ const createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner })
-    .then((card) => res.status(STATUS_OK).send({ data: card }))
+    .then((card) => res.send({ data: card }))
     .catch((e) => {
       if (e.name === 'ValidationError') {
         next(ErrorBadRequest('Ошибка данных в запросе'));
@@ -35,7 +34,7 @@ const deleteCardById = (req, res, next) => {
         return Card.findByIdAndDelete(req.params.id);
       }
     })
-    .then((deletedCard) => res.status(STATUS_OK).send({ data: deletedCard }))
+    .then((deletedCard) => res.send({ data: deletedCard }))
     .catch((e) => {
       if (e.name === 'CastError') {
         next(new ErrorBadRequest('Ошибка данных в запросе: некорректный Id'));
@@ -54,7 +53,7 @@ const likeCard = (req, res, next) => {
     .populate(['owner', 'likes'])
     .orFail(() => new ErrorNotFound('Карточка не найдена'))
     .then((card) => {
-      res.status(STATUS_OK).send({ data: card });
+      res.send({ data: card });
     })
     .catch((e) => {
       if (e.name === 'CastError') {
@@ -74,7 +73,7 @@ const dislikeCard = (req, res, next) => {
     .populate(['owner', 'likes'])
     .orFail(() => new ErrorNotFound('Карточка не найдена'))
     .then((card) => {
-      res.status(STATUS_OK).send({ data: card });
+      res.send({ data: card });
     })
     .catch((e) => {
       if (e.name === 'CastError') {
