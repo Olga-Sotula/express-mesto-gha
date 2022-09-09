@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 
 const { ErrorBadAuth } = require('../errors/ErrorBadAuth');
 
-const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_+.~#?&/=]*)/;
+const { REGEX_URL } = require('../utils/constants');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
-      validator: (v) => regex.test(v),
+      validator: (v) => REGEX_URL.test(v),
       message: 'Невалидный аватар',
     },
   },
