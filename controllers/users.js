@@ -102,7 +102,6 @@ const updateUserProfile = (req, res, next) => {
   User.findByIdAndUpdate(userId, { name, about }, {
     new: true,
     runValidators: true,
-    upsert: true,
   })
     .orFail(() => new ErrorNotFound('Пользователь не найден'))
     .then((user) => {
@@ -125,7 +124,6 @@ const updateUserAvatar = (req, res, next) => {
   User.findByIdAndUpdate(userId, { avatar }, {
     new: true,
     runValidators: true,
-    upsert: true,
   })
     .orFail(() => new ErrorNotFound('Пользователь не найден'))
     .then((user) => {
